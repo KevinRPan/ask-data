@@ -70,18 +70,18 @@ else:
     unsafe_allow_html=True
     )
 
-hide="""
-<style>
-footer{
-	visibility: hidden;
-    position: relative;
-}
-.viewerBadge_container__1QSob{
-    visibility: hidden;
-}
-<style>
-"""
-st.markdown(hide, unsafe_allow_html=True)
+# hide="""
+# <style>
+# footer{
+# 	visibility: hidden;
+#     position: relative;
+# }
+# .viewerBadge_container__1QSob{
+#     visibility: hidden;
+# }
+# <style>
+# """
+# st.markdown(hide, unsafe_allow_html=True)
 
 st.markdown(
     """
