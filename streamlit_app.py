@@ -99,7 +99,7 @@ if input_text:
     prompt = "Query help for "+str(input_text)
     if prompt:
         openai.api_key = st.secrets["openaiKey"]
-        response = openai.Completion.create(engine="code-davinci-002", prompt=prompt, max_tokens=1000)
+        response = openai.Completion.create(engine="text-davinci-002", prompt=prompt, max_tokens=1000)
         brainstorming_output = response['choices'][0]['text']
         today = datetime.today().strftime('%Y-%m-%d')
         topic = "Query help for: "+input_text+"\n@Date: "+str(today)+"\n"+brainstorming_output
