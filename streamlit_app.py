@@ -30,7 +30,7 @@ with st.sidebar:
     )
 
 
-input_text = None
+input_text_table, input_text_question = None, None
 if 'output' not in st.session_state:
     st.session_state['output'] = 0
 
@@ -97,7 +97,7 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-if input_text:
+if input_text_table and input_text_question:
     prompt_prefix = "Using the table structure: "
     prompt_suffix = "Write me a SQL query to to find: "
     prompt = prompt_prefix + str(input_text_table) + prompt_suffix + str(input_text_question)
