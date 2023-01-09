@@ -13,7 +13,6 @@ html_temp = """
                 """
 
 
-
 with st.sidebar:
     st.markdown("""
     # About 
@@ -84,7 +83,6 @@ footer{
 """
 st.markdown(hide, unsafe_allow_html=True)
 
-html(button, height=70, width=220)
 st.markdown(
     """
     <style>
