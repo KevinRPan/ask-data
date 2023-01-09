@@ -34,41 +34,41 @@ input_text = None
 if 'output' not in st.session_state:
     st.session_state['output'] = 0
 
-if st.session_state['output'] <=2:
-    st.markdown("""
-    # Query Engine
-    """)
-    input_text = st.text_input("Let's check for ", disabled=False)
-    st.session_state['output'] = st.session_state['output'] + 1
-else:
-    st.info("Try out your query!")
-    st.markdown('''
-    <style>
-    .btn{
-        display: inline-flex;
-        -moz-box-align: center;
-        align-items: center;
-        -moz-box-pack: center;
-        justify-content: center;
-        font-weight: 400;
-        padding: 0.25rem 0.75rem;
-        border-radius: 0.25rem;
-        margin: 0px;
-        line-height: 1.6;
-        color: #fff;
-        background-color: #00acee;
-        width: auto;
-        user-select: none;
-        border: 1px solid #00acee;
-        }
-    .btn:hover{
-        color: #00acee;
-        background-color: #fff;
-    }
-    </style>
-    ''',
-    unsafe_allow_html=True
-    )
+# if st.session_state['output'] <=2:
+st.markdown("""
+# Query Engine
+""")
+input_text = st.text_input("Let's check for ", disabled=False)
+st.session_state['output'] = st.session_state['output'] + 1
+# else:
+#     st.info("Try out your query!")
+#     st.markdown('''
+#     <style>
+#     .btn{
+#         display: inline-flex;
+#         -moz-box-align: center;
+#         align-items: center;
+#         -moz-box-pack: center;
+#         justify-content: center;
+#         font-weight: 400;
+#         padding: 0.25rem 0.75rem;
+#         border-radius: 0.25rem;
+#         margin: 0px;
+#         line-height: 1.6;
+#         color: #fff;
+#         background-color: #00acee;
+#         width: auto;
+#         user-select: none;
+#         border: 1px solid #00acee;
+#         }
+#     .btn:hover{
+#         color: #00acee;
+#         background-color: #fff;
+#     }
+#     </style>
+#     ''',
+#     unsafe_allow_html=True
+#     )
 
 # hide="""
 # <style>
