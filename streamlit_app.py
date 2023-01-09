@@ -105,8 +105,8 @@ if input_text_table and input_text_question:
         openai.api_key = st.secrets["openaiKey"]
         response = openai.Completion.create(engine="text-davinci-002", prompt=prompt, max_tokens=1000)
         question_output = response['choices'][0]['text']
-        today = datetime.today().strftime('%Y-%m-%d')
-        topic = "Query help for: "+input_text+"\n@Date: "+str(today)+"\n"+question_output
+        today = datetime.today().strftime('%Y-%m-%d:%X')
+        topic = "Query help for: "+input_text_question+"\n@Date: "+str(today)+"\n"+question_output
         
         st.info(question_output)
         filename = "query_"+ str(input_text_question)+"_"+str(today)+".sql"
