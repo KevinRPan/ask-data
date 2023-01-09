@@ -38,7 +38,9 @@ if 'output' not in st.session_state:
 st.markdown("""
 # Query Engine
 """)
-input_text = st.text_input("Let's check for ", disabled=False)
+input_text_table = st.text_input("Table Structure", disabled=False)
+
+input_text_question = st.text_input("Your question", disabled=False)
 st.session_state['output'] = st.session_state['output'] + 1
 # else:
 #     st.info("Try out your query!")
@@ -96,16 +98,18 @@ st.markdown(
     unsafe_allow_html=True,
 )
 if input_text:
-    prompt = "Query help for "+str(input_text)
+    prompt_prefix = "Using the table structure: "
+    prompt_suffix = "Write me a SQL query to to find: "
+    prompt = prompt_prefix + str(input_text_table) + prompt_suffix + str(input_text_question)
     if prompt:
         openai.api_key = st.secrets["openaiKey"]
         response = openai.Completion.create(engine="text-davinci-002", prompt=prompt, max_tokens=1000)
-        brainstorming_output = response['choices'][0]['text']
+        question_output = response['choices'][0]['text']
         today = datetime.today().strftime('%Y-%m-%d')
-        topic = "Query help for: "+input_text+"\n@Date: "+str(today)+"\n"+brainstorming_output
+        topic = "Query help for: "+input_text+"\n@Date: "+str(today)+"\n"+question_output
         
-        st.info(brainstorming_output)
-        filename = "brainstorming_"+str(today)+".sql"
+        st.info(question_output)
+        filename = "query_"+ str(input_text_question)+"_"+str(today)+".sql"
         btn = st.download_button(
             label="Download SQL",
             data=topic,
