@@ -2,3 +2,4 @@
 .streamlit
 Pipfile.lock
 Pipfile
+.vscode
