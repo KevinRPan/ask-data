@@ -16,11 +16,13 @@ html_temp = """
 with st.sidebar:
     st.markdown("""
     # About 
-    Query Engine is a helper tool built using generative AI to help you answer questions about your data. 
+    Ask Data is a helper tool built using generative AI to help you answer questions about your data. 
+    
+    Query Engine will enable every knowledge worker to unlock the powers of data science. 
     """)
     st.markdown(html_temp.format("rgba(55, 53, 47, 0.16)"),unsafe_allow_html=True)
     st.markdown("""
-    # How does it work
+    # Tips
     Enter your table structure (table names, column names) and any questions you have about it.  
     """)
     st.markdown(html_temp.format("rgba(55, 53, 47, 0.16)"),unsafe_allow_html=True)
