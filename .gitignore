@@ -1,0 +1,4 @@
+.DS_Store
+.streamlit
+Pipfile.lock
+Pipfile
