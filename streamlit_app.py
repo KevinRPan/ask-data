@@ -122,7 +122,8 @@ if (len(table_structure) > 5) and (len(input_text_question) > 5):
                 eval_check = eval(question_output)
                 st.write(eval_check)
             except Exception as e:
-                st.write(e.message)
+                pass
+                # st.write(e)
 
         elif query_type == 'SQL':
             try:
@@ -130,4 +131,5 @@ if (len(table_structure) > 5) and (len(input_text_question) > 5):
                 sql_string = question_output.replace('table','df')
                 st.write(pysqldf(sql_string))
             except Exception as e:
-                st.write(e)
+                pass
+                # st.write(e)
