@@ -23,7 +23,9 @@ with st.sidebar:
     st.markdown(html_temp.format("rgba(55, 53, 47, 0.16)"),unsafe_allow_html=True)
     st.markdown("""
     # Tips:
-    Enter your table structure (table names: column names) and any questions you have about it.  
+    Enter your table structure, upload a file, or try the demo dataset. 
+
+    Then ask any questions you have about it. 
     """)
     st.markdown(html_temp.format("rgba(55, 53, 47, 0.16)"),unsafe_allow_html=True)
     st.markdown("""
@@ -36,25 +38,34 @@ with st.sidebar:
         options=['SQL', 'Python', 'Brainstorm!'])
 
 
-input_text_table, input_text_question = None, None
-
-if 'output' not in st.session_state:
-    st.session_state['output'] = 0
-
 st.markdown("""
 # Query Engine
 """)
 
-input_text_table = st.text_input("Enter your Table Structure", disabled=False, placeholder="Example format: fact_table: (date, id, val), dim_table: (id, feat, qual)")
+input_text_table, input_text_question, input_df_table = None, None, ''
 
-uploaded_file = st.file_uploader("Or choose a file")
+upload_tab, schema_tab, demo_tab = st.tabs(['Table Structure', 'Upload', 'Demo'])
 
-input_df_table = ''
+with upload_tab:
+    uploaded_file = st.file_uploader("Or choose a file")
 
-if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file)
-    st.write(df)
-    input_df_table = ', '.join([str(col) for col in df.columns])
+    if uploaded_file is not None:
+        df = pd.read_csv(uploaded_file)
+        st.write(df)
+        input_df_table = ', '.join([str(col) for col in df.columns])
+
+with schema_tab: 
+    input_text_table = st.text_input("Enter your Table Structure", disabled=False, placeholder="Example format: fact_table: (date, id, val), dim_table: (id, feat, qual)")
+
+with demo_tab:
+    demo_df = pd.read_csv('data/Forbes2k.csv')
+    st.write(demo_df)
+    demo_df_table = ', '.join([str(col) for col in demo_df.columns])
+
+
+if 'output' not in st.session_state:
+    st.session_state['output'] = 0
+  
 
 input_text_question = st.text_input("Your question", disabled=False, placeholder="Example: What is the weekly average val of feature?")
 
