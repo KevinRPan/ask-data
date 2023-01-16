@@ -96,9 +96,16 @@ with demo_tab:
 input_text_question = st.text_input("What would you like to ask your data?", disabled=False, \
     placeholder="Example: What is the weekly average val of feature?")
 
+
+
+
+
 if 'output' not in st.session_state:
     st.session_state['output'] = 0
   
+
+## Prompter 
+
 if (len(table_structure) > 5) and (len(input_text_question) > 5):
 
     st.session_state['output'] = st.session_state['output'] + 1
