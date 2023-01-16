@@ -4,8 +4,13 @@ from datetime import datetime
 from streamlit.components.v1 import html
 import pandas as pd
 from pandasql import sqldf 
+import re
 
 st.set_page_config(page_title="Query Engine")
+
+# Functions
+def create_table_names_from_df(df):
+    return('"' + '", "'.join([str(col) for col in df.columns])+'"')
 
 html_temp = """
                 <div style="background-color:{};padding:1px">
@@ -42,42 +47,56 @@ st.markdown("""
 # Query Engine
 """)
 
-input_text_table, input_text_question, input_df_table = None, None, ''
+input_text_table, input_text_question, input_df_table = None, None, None
 
-upload_tab, schema_tab, demo_tab = st.tabs(['Table Structure', 'Upload', 'Demo'])
+table_structure = ''
+
+upload_tab, schema_tab, demo_tab = st.tabs(['Upload','Table Structure', 'Demo'])
 
 with upload_tab:
-    uploaded_file = st.file_uploader("Or choose a file")
+    uploaded_file = st.file_uploader("Choose your own CSV file")
+
+    if st.session_state.get("schema_tab") not in [None,""]:
+        st.warning("To use your own data, clear the table structure in the Table Structure tab.")
 
     if uploaded_file is not None:
-        df = pd.read_csv(uploaded_file)
-        st.write(df)
-        input_df_table = ', '.join([str(col) for col in df.columns])
+        upload_df = pd.read_csv(uploaded_file)
+        st.write(upload_df)
+        table_structure = create_table_names_from_df(upload_df)
+        prompt_prefix = f'Using a table named {uploaded_file.name}, with columns: '
 
 with schema_tab: 
-    input_text_table = st.text_input("Enter your Table Structure", disabled=False, placeholder="Example format: fact_table: (date, id, val), dim_table: (id, feat, qual)")
+    input_text_table = st.text_input("Enter your Table Structure", disabled=False, \
+        placeholder="Example format: fact_table: (date, id, val), dim_table: (id, feat, qual)")
+    
+    if input_text_table:
+        table_structure = input_text_table
+        prompt_prefix = "Using a table structure: "
 
 with demo_tab:
-    demo_df = pd.read_csv('data/Forbes2k.csv')
+    st.markdown("""
+    ### Example dataset: Forbes 2000
+    """)
+    demofile_name = 'Forbes2k'
+    demofile_ext = '.csv'
+    demo_df = pd.read_csv('data/'+demofile_name+demofile_ext)
     st.write(demo_df)
-    demo_df_table = ', '.join([str(col) for col in demo_df.columns])
+    if uploaded_file is None:
+        if st.session_state.get("schema_tab") not in [None,""]:
+            st.warning("To use the demo, clear the table structure in the Table Structure tab.")
+        table_structure = create_table_names_from_df(demo_df)
+        prompt_prefix = 'Using a table named "table", with columns: '
 
+
+input_text_question = st.text_input("What would you like to ask your data?", disabled=False, \
+    placeholder="Example: What is the weekly average val of feature?")
 
 if 'output' not in st.session_state:
     st.session_state['output'] = 0
   
-
-input_text_question = st.text_input("Your question", disabled=False, placeholder="Example: What is the weekly average val of feature?")
-
-st.session_state['output'] = st.session_state['output'] + 1
-
-# st.write(st.session_state['output'])
-
-table_structure = input_text_table + '\n' + input_df_table
-
 if (len(table_structure) > 5) and (len(input_text_question) > 5):
 
-    prompt_prefix = "Using the table structure: "
+    st.session_state['output'] = st.session_state['output'] + 1
 
     if query_type == 'SQL':
         prompt_query = "Write me a SQL query to to find: "
@@ -93,8 +112,8 @@ if (len(table_structure) > 5) and (len(input_text_question) > 5):
 
 
     elif query_type == 'Brainstorm!':
-        prompt_query = "Brainstorm a solution to find: "
-        prompt_suffix = ''
+        prompt_query = "What are some other things to explore after finding "
+        prompt_suffix = '?'
         output_type = 'Text'
         output_file_ext = '.md'
 
@@ -127,7 +146,10 @@ if (len(table_structure) > 5) and (len(input_text_question) > 5):
             data=topic,
             file_name=filename
         )
-    
+
+        # Evaluate the output 
+        df = upload_df if uploaded_file is not None else demo_df
+
         if query_type == 'Python':
             try:
                 eval_check = eval(question_output)
@@ -139,7 +161,10 @@ if (len(table_structure) > 5) and (len(input_text_question) > 5):
         elif query_type == 'SQL':
             try:
                 pysqldf = lambda q: sqldf(q, globals())
-                sql_string = question_output.replace('table','df')
+                re_table_name = re.compile('FROM (\w*)', re.IGNORECASE)
+
+                sql_string = re_table_name.sub('FROM df', question_output)
+                # st.write(sql_string)
                 st.write(pysqldf(sql_string))
             except Exception as e:
                 pass
