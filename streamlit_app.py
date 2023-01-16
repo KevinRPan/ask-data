@@ -56,7 +56,7 @@ upload_tab, schema_tab, demo_tab = st.tabs(['Upload','Table Structure', 'Demo'])
 with upload_tab:
     uploaded_file = st.file_uploader("Choose your own CSV file")
 
-    if st.session_state.get("schema_tab") not in [None,""]:
+    if st.session_state.get("input_text_table") not in [None,""]:
         st.warning("To use your own data, clear the table structure in the Table Structure tab.")
 
     if uploaded_file is not None:
@@ -66,6 +66,11 @@ with upload_tab:
         prompt_prefix = f'Using a table named {uploaded_file.name}, with columns: '
 
 with schema_tab: 
+
+    if st.session_state.get("schema_tab") not in [None,""]:
+        st.warning("To use your own data, clear the table structure in the Table Structure tab.")
+
+
     input_text_table = st.text_input("Enter your Table Structure", disabled=False, \
         placeholder="Example format: fact_table: (date, id, val), dim_table: (id, feat, qual)")
     
@@ -82,7 +87,7 @@ with demo_tab:
     demo_df = pd.read_csv('data/'+demofile_name+demofile_ext)
     st.write(demo_df)
     if uploaded_file is None:
-        if st.session_state.get("schema_tab") not in [None,""]:
+        if st.session_state.get("input_text_table") not in [None,""]:
             st.warning("To use the demo, clear the table structure in the Table Structure tab.")
         table_structure = create_table_names_from_df(demo_df)
         prompt_prefix = 'Using a table named "table", with columns: '
@@ -112,8 +117,8 @@ if (len(table_structure) > 5) and (len(input_text_question) > 5):
 
 
     elif query_type == 'Brainstorm!':
-        prompt_query = "What are some other things to explore after finding "
-        prompt_suffix = '?'
+        prompt_query = "What are some other things to explore in this data after finding "
+        prompt_suffix = '\n Only return your top five ideas in a numbered list.'
         output_type = 'Text'
         output_file_ext = '.md'
 
@@ -138,6 +143,8 @@ if (len(table_structure) > 5) and (len(input_text_question) > 5):
         today = datetime.today().strftime('%Y-%m-%d')
         topic = "Query help for: "+input_text_question+"\n@Date: "+str(today)+"\n"+question_output
 
+        if query_type == "Brainstorm!":
+            question_output.replace('-','\n-')
         st.info(question_output)
 
         filename = "query_"+str(st.session_state['output'])+"_"+str(today)+ output_file_ext
