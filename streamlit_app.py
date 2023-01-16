@@ -138,7 +138,7 @@ if (len(table_structure) > 5) and (len(input_text_question) > 5):
              + ' \n' \
              + prompt_suffix 
 
-    st.write(prompt)
+    # st.write(prompt)
 
     if prompt:
         openai.api_key = st.secrets["openaiKey"]
