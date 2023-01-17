@@ -12,6 +12,8 @@ st.set_page_config(page_title="Query Engine")
 def create_table_names_from_df(df):
     return('"' + '", "'.join([str(col) for col in df.columns])+'"')
 
+is_debug_mode = False 
+
 html_temp = """
                 <div style="background-color:{};padding:1px">
                 
@@ -21,16 +23,16 @@ html_temp = """
 with st.sidebar:
     st.markdown("""
     # About 
-    Ask Data is a tool built using Large Language Models (LLMs) to help you answer questions about your data. 
+    A Query Engine is a tool to help you answer questions about your data. 
 
-    Query Engine will be a platform to enable everyone to unlock the powers of data science. 
+    Ask Data aims to empower everyone to understand their data. 
     """)
     st.markdown(html_temp.format("rgba(55, 53, 47, 0.16)"),unsafe_allow_html=True)
     st.markdown("""
     # Tips:
     Enter your table structure, upload a file, or try the demo dataset. 
 
-    Then ask any questions you have about it. 
+    Then ask any questions you have about it, like you'd ask a team member. 
     """)
     st.markdown(html_temp.format("rgba(55, 53, 47, 0.16)"),unsafe_allow_html=True)
     st.markdown("""
@@ -41,6 +43,11 @@ with st.sidebar:
     query_type = st.radio(
         'Select an output preference',
         options=['SQL', 'Python', 'Brainstorm!'])
+
+    st.markdown("""
+    For any questions, feedback, or inquiries, please reach out to [build@askdata.app](mailto:build@askdata.app)!""")
+
+    
 
 
 st.markdown("""
@@ -111,13 +118,13 @@ if (len(table_structure) > 5) and (len(input_text_question) > 5):
     st.session_state['output'] = st.session_state['output'] + 1
 
     if query_type == 'SQL':
-        prompt_query = "Write me a SQL query to to find: "
+        prompt_query = "\n Write me a SQL query to to find: "
         prompt_suffix = '' 
         output_type = 'SQL'
         output_file_ext = '.sql'
 
     elif query_type == 'Python': 
-        prompt_query = "You have a dataframe named df. Do not write an import or read file. Write me python code on the dataframe df using the pandas library to find: "
+        prompt_query = "\n You have a dataframe named df. Do not write an import or read file. Write me python code on the dataframe df using the pandas library to find: "
         prompt_suffix = 'import pandas as pd \n'
         output_type = 'Python'
         output_file_ext = '.py'
@@ -138,7 +145,8 @@ if (len(table_structure) > 5) and (len(input_text_question) > 5):
              + ' \n' \
              + prompt_suffix 
 
-    # st.write(prompt)
+    if is_debug_mode:
+        st.write(prompt)
 
     if prompt:
         openai.api_key = st.secrets["openaiKey"]
@@ -175,8 +183,9 @@ if (len(table_structure) > 5) and (len(input_text_question) > 5):
                 st.markdown("### Explanation")
                 st.write(explanation_output)
             except Exception as e:
-                # pass
-                st.write(e)
+                if is_debug_mode:
+                    st.write(e)
+                pass
 
         elif query_type == 'SQL':
             try:
@@ -185,14 +194,18 @@ if (len(table_structure) > 5) and (len(input_text_question) > 5):
 
                 sql_string = re_table_name.sub('FROM df', question_output)
 
-
                 explanation_response = openai.Completion.create(engine="text-davinci-002", prompt=explainer_prompt, max_tokens=1000, temperature=0.3, top_p=1, frequency_penalty=0.0, presence_penalty=0.0)
                 explanation_output = explanation_response['choices'][0]['text']
+                
                 st.markdown("### Explanation")
                 st.write(explanation_output)
 
-                # st.write(sql_string)
+                if is_debug_mode:
+                    st.write(sql_string)
+                pass
+            
                 st.write(pysqldf(sql_string))
             except Exception as e:
+                if is_debug_mode:
+                    st.write(e)
                 pass
-                # st.write(e)
