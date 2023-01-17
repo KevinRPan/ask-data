@@ -164,13 +164,19 @@ if (len(table_structure) > 5) and (len(input_text_question) > 5):
         # Evaluate the output 
         df = upload_df if uploaded_file is not None else demo_df
 
+        explainer_prompt_prefix = "Please explain what the following code does: \n"
+        explainer_prompt = explainer_prompt_prefix + question_output
         if query_type == 'Python':
             try:
                 eval_check = eval(question_output)
                 st.write(eval_check)
+                explanation_response = openai.Completion.create(engine="text-davinci-002", prompt=explainer_prompt, max_tokens=1000, temperature=0.3, top_p=1, frequency_penalty=0.0, presence_penalty=0.0)
+                explanation_output = explanation_response['choices'][0]['text']
+                st.markdown("### Explanation")
+                st.write(explanation_output)
             except Exception as e:
-                pass
-                # st.write(e)
+                # pass
+                st.write(e)
 
         elif query_type == 'SQL':
             try:
@@ -178,6 +184,13 @@ if (len(table_structure) > 5) and (len(input_text_question) > 5):
                 re_table_name = re.compile('FROM (\w*)', re.IGNORECASE)
 
                 sql_string = re_table_name.sub('FROM df', question_output)
+
+
+                explanation_response = openai.Completion.create(engine="text-davinci-002", prompt=explainer_prompt, max_tokens=1000, temperature=0.3, top_p=1, frequency_penalty=0.0, presence_penalty=0.0)
+                explanation_output = explanation_response['choices'][0]['text']
+                st.markdown("### Explanation")
+                st.write(explanation_output)
+
                 # st.write(sql_string)
                 st.write(pysqldf(sql_string))
             except Exception as e:
