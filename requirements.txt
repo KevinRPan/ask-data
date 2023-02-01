@@ -3,3 +3,6 @@ streamlit
 pandas
 pandasql
 datetime
+matplotlib
+seaborn
+# streamlit_authenticator
