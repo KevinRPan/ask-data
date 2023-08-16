@@ -3,3 +3,7 @@
 Pipfile.lock
 Pipfile
 .vscode
+.js 
+functions/__pycache__/*
+js_app
+scrap.py

@@ -6,3 +6,7 @@ datetime
 matplotlib
 seaborn
 # streamlit_authenticator
+bs4
+logging
+shutil
+plotly
