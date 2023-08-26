@@ -1,0 +1,4 @@
+- name: pierre-review
+  # You may pin to the exact commit or the version.
+  # uses: aummo/pierre-review@9ce758e9855cb78bb53d68901356f4f496ee38ea
+  uses: aummo/pierre-review@0.0.10
